@@ -8,29 +8,19 @@ export check
 function what(file)
     try  
         open(file, "r") do s 
-            return read(s) # perform desired operations if file exists 
+            return read(s,String)  
         end 
     catch 
-        # either warn or print that the file doesn't exist 
         throw(MethodError("file is not present"))
     end 
 end
-
-#function what(file)
-#   if isfile(file) == true
-#       l=Mmap.mmap(file)
-#       return l
-#   else throw(MethodError("file is not present"))
-#   end
-#end
-
 
 
 const tests = Function[]
 
 function test_gif(f)
     h=what(f)
-    if all(h[1:4] .== [0x47, 0x49, 0x46, 0x38])
+    if h[1:6] == "GIF87a" || h[1:6] == "GIF89a"
         return "gif"
     end
 end
@@ -40,7 +30,7 @@ push!(tests,test_gif)
 
 function test_jpeg(f)
     h=what(f)
-    if all(h[1:4] .== [0xff, 0xd8, 0xff, 0xe0]) 
+    if h[7:10] == "JFIF" || h[7:10] =="Exif"
         return "jpeg"
     end
 end
@@ -49,25 +39,19 @@ push!(tests,test_jpeg)
 
 function test_rgb(f)
     h=what(f)
-    if all(h[1:2] .== [0x01, 0xd8])
+    """SGI image library"""
+    if startswith(h,"\001\332")
         return "rgb"
     end
 end
 
 push!(tests,test_rgb)
 
-function test_bmp(f)
-    h=what(f)
-    if all(h[1:2] .== [0x42, 0x4d])
-        return "bmp"
-    end
-end
 
-push!(tests,test_bmp)
 
 function test_tiff(f)
     h=what(f)
-    if all(h[1:4] .== [0x49, 0x49, 0x2a, 0x00]) 
+    if h[1:2] == "MM" || h[1:2] == "II"
         return "tiff"
     end
 end
@@ -76,7 +60,7 @@ push!(tests,test_tiff)
    
 function test_webp(f)
     h=what(f)
-    if all(h[1:5] .== [0x52, 0x49, 0x46, 0x46,0x1c]) 
+    if startswith(h, "RIFF") && h[9:12] == "WEBP"
         return "webp"
     end
 end
@@ -85,7 +69,7 @@ push!(tests,test_webp)
 
 function test_png(f)
     h=what(f)
-    if all(h[1:4] .== [0x89, 0x50, 0x4e, 0x47])
+    if startswith(h,"\x89PNG\r\n\x1a\n")
         return "png"
     end
 end
@@ -94,23 +78,73 @@ push!(tests,test_png)
  
 function test_exr(f)
     h=what(f)
-    if all(h[1:4] .== [0x76, 0x2f, 0x31, 0x01])
+    if startswith(h,"\x76\x2f\x31\x01")
         return "exr"
     end
 end
 
 push!(tests,test_exr)
 
- 
-function test_pgm(f)
+function test_xbm(f)
+    """X bitmap (X10 or X11)"""
     h=what(f)
-    if all(h[1:3] .== [0x50, 0x35, 0x0a])  
+    if startswith(h,"#define ")
+        return "xbm"
+    end
+end
+push!(tests,test_xbm)
+
+function test_pbm(f)
+    """PBM (portable bitmap)"""
+    h=what(f)
+    if length(h) >= 3 && h[1] == 'P' && occursin(h[2],"14") && occursin(h[3],"\t\n\r")
+        return "pbm"
+    end
+end
+
+push!(tests,test_pbm)
+
+function test_rast(f)
+    """Sun raster file"""
+    h=what(f)
+    if startswith(h,"\x59\xA6\x6A\x95")
+        return "rast"
+    end
+end
+
+push!(tests,test_rast)
+
+function test_bmp(f)
+    h=what(f)
+    if startswith(h,"BM")
+        return "bmp"
+    end
+end
+
+push!(tests,test_bmp)
+
+
+function test_pgm(f)
+    """PGM (portable graymap)"""
+    h=what(f)
+    if length(h) >= 3 && h[1] == 'P' && occursin(h[2],"25") && occursin(h[3],"\t\n\r")
         return "pgm"
     end
 end
 
 push!(tests,test_pgm)
 
+function test_ppm(f)
+    """PPM (portable pixmap)"""
+    h=what(f)
+    if length(h) >= 3 && h[1] == 'P' && occursin(h[2],"36") && occursin(h[3],"\t\n\r")
+        return "ppm"
+    end
+end
+
+push!(tests,test_ppm)
+
+println(length(tests))
 
 """
        ImgHdr.check(path/to/file)
