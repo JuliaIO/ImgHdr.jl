@@ -1,17 +1,74 @@
-using ImgHdr, Test
+using ImgHdr: imgtype
+using Test: @testset, @test, @test_throws
 
-@testset "test_images" begin
-    @test check("images/example.png") == "png"
-    @test check("images/example.gif") == "gif"
-    @test check("images/example.jpeg") == "jpeg"
-    @test check("images/example.exr") == "exr"
-    @test check("images/example.tiff") == "tiff"
-    @test check("images/example.webp") == "webp"
-    @test check("images/example.pbm") == "pbm"
-    @test check("images/example.xbm") == "xbm"
-    @test check("images/example.bmp") == "bmp"
-    @test check("images/example.pgm") == "pgm"
-    @test check("images/example.ppm") == "ppm"
-    @test check("images/example.ras") == "rast"
-    @test_throws MethodError check("ait")
+@testset "test_images_types" begin
+    png = "images/example.png"
+    gif = "images/example.gif"
+
+    @test ImgHdr.isa_png(png)
+    @test imgtype(png) == "png"
+    @test imgtype(png) != "gif"
+
+    @test ImgHdr.isa_gif(gif)
+    @test imgtype(gif) == "gif"
+    @test imgtype(png) != "png"
+
+    jpeg = "images/example.jpeg"
+    @test ImgHdr.isa_jpeg(jpeg)
+    @test imgtype(jpeg) == "jpeg"
+    @test imgtype(jpeg) != "pgn"
+
+    exr = "images/example.exr"
+    @test ImgHdr.isa_exr(exr)
+    @test imgtype(exr) == "exr"
+    @test imgtype(exr) != "gif"
+
+    tiff = "images/example.tiff"
+    @test ImgHdr.isa_tiff(tiff)
+    @test imgtype(tiff) == "tiff"
+    @test imgtype(tiff) != "png"
+
+    webp = "images/example.webp"
+    @test ImgHdr.isa_webp(webp)
+    @test imgtype(webp) == "webp"
+    @test imgtype(webp) != "gif"
+
+    pbm = "images/example.pbm"
+    @test ImgHdr.isa_pbm(pbm)
+    @test imgtype(pbm) == "pbm"
+    @test imgtype(pbm) != "png"
+
+    xbm = "images/example.xbm"
+    @test ImgHdr.isa_xbm(xbm)
+    @test imgtype(xbm) == "xbm"
+    @test imgtype(xbm) != "gif"
+
+    bmp = "images/example.bmp"
+    @test ImgHdr.isa_bmp(bmp)
+    @test imgtype(bmp) == "bmp"
+    @test imgtype(bmp) != "png"
+
+    pgm = "images/example.pgm"
+    @test ImgHdr.isa_pgm(pgm)
+    @test imgtype(pgm) == "pgm"
+    @test imgtype(pgm) != "gif"
+
+    ppm = "images/example.ppm"
+    @test ImgHdr.isa_ppm(ppm)
+    @test imgtype(ppm) == "ppm"
+    @test imgtype(ppm) != "png"
+
+    rast = "images/example.ras"
+    @test ImgHdr.isa_rast(rast)
+    @test imgtype(rast) == "rast"
+    @test imgtype(rast) != "gif"
+
+    rgb = "images/example.rgb"
+    @test ImgHdr.isa_ppm(rgb)
+    @test imgtype(rgb) == "rgb"
+    @test imgtype(rgb) != "png"
+    
+    not = "images/not-a-image.txt"
+    @test ImgHdr.isa_ppm(not) == false
+    @test imgtype(not) == nothing
 end 
