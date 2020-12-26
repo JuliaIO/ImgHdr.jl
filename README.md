@@ -9,8 +9,11 @@ Library to Check Type of Image
 ## Using
 
 ```julia
+julia> using ImgHdr
 
-using ImgHdr
-ImgHdr.check(path/to/file)
+julia> imgtype("path/to/file.png")
+"png"
 
+julia> ImgHdr.isa_png("path/to/file.png")
+true
 ```
