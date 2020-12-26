@@ -158,8 +158,9 @@ push!(tests,isa_pgm)
 function isa_ppm(f)
     h=_read(f)
     if length(h) >= 3 && h[1] == 'P' && occursin(h[2],"36") && occursin(h[3],"\t\n\r")
-        return "ppm"
+        return true
     end
+    return false
 end
 
 push!(tests,isa_ppm)
