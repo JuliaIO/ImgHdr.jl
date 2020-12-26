@@ -1,11 +1,11 @@
+"Check image headers to determine image format."
 module ImgHdr
-export check
 
-"""
-    Read content of the file and returns collection of U8s
+export imgtype
 
-"""
-function what(file)
+
+"Read content of the file and data as `Array{UInt8}`."
+function _read(file)
     try  
         open(file, "r") do s 
             return read(s,String)  
@@ -15,136 +15,158 @@ function what(file)
     end 
 end
 
-
 const tests = Function[]
 
-function test_gif(f)
-    h=what(f)
+
+function isa_gif(f)
+    h=_read(f)
     if h[1:6] == "GIF87a" || h[1:6] == "GIF89a"
-        return "gif"
+        return true
     end
+    return false
 end
 
-push!(tests,test_gif)
+push!(tests,isa_gif)
 
 
-function test_jpeg(f)
-    h=what(f)
+function isa_jpeg(f)
+    h=_read(f)
     if h[7:10] == "JFIF" || h[7:10] =="Exif"
-        return "jpeg"
+        return true
     end
+    return false
 end
      
-push!(tests,test_jpeg)
+push!(tests,isa_jpeg)
 
-function test_rgb(f)
-    h=what(f)
-    """SGI image library"""
+
+"SGI image library"
+function isa_rgb(f)
+    h=_read(f)
     if startswith(h,"\001\332")
-        return "rgb"
+        return true
     end
+    return false
 end
 
-push!(tests,test_rgb)
+push!(tests,isa_rgb)
 
 
-
-function test_tiff(f)
-    h=what(f)
+function isa_tiff(f)
+    h=_read(f)
     if h[1:2] == "MM" || h[1:2] == "II"
-        return "tiff"
+        return true
     end
+    return false
 end
 
-push!(tests,test_tiff)
+push!(tests,isa_tiff)
    
-function test_webp(f)
-    h=what(f)
+
+function isa_webp(f)
+    h=_read(f)
     if startswith(h, "RIFF") && h[9:12] == "WEBP"
-        return "webp"
+        return true
     end
+    return false
 end
 
-push!(tests,test_webp)
+push!(tests,isa_webp)
 
-function test_png(f)
-    h=what(f)
+
+function isa_png(f)
+    h=_read(f)
     if startswith(h,"\x89PNG\r\n\x1a\n")
-        return "png"
+        return true
     end
+    return false
 end
 
-push!(tests,test_png)
+push!(tests,isa_png)
  
-function test_exr(f)
-    h=what(f)
+
+function isa_exr(f)
+    h=_read(f)
     if startswith(h,"\x76\x2f\x31\x01")
-        return "exr"
+        return true
     end
+    return false
 end
 
-push!(tests,test_exr)
+push!(tests,isa_exr)
 
-function test_xbm(f)
-    """X bitmap (X10 or X11)"""
-    h=what(f)
+
+"X bitmap (X10 or X11)"
+function isa_xbm(f)
+    h=_read(f)
     if startswith(h,"#define ")
-        return "xbm"
+        return true
     end
+    return false
 end
-push!(tests,test_xbm)
+push!(tests,isa_xbm)
 
-function test_pbm(f)
-    """PBM (portable bitmap)"""
-    h=what(f)
+
+"PBM (portable bitmap)"
+function isa_pbm(f)
+    h=_read(f)
     if length(h) >= 3 && h[1] == 'P' && occursin(h[2],"14") && occursin(h[3],"\t\n\r")
-        return "pbm"
+        return true
     end
+    return false
 end
 
-push!(tests,test_pbm)
+push!(tests,isa_pbm)
 
-function test_rast(f)
-    """Sun raster file"""
-    h=what(f)
+
+"Sun raster file"
+function isa_rast(f)
+    h=_read(f)
     if startswith(h,"\x59\xA6\x6A\x95")
-        return "rast"
+        return return true
     end
+    return false
 end
 
-push!(tests,test_rast)
+push!(tests,isa_rast)
 
-function test_bmp(f)
-    h=what(f)
+
+function isa_bmp(f)
+    h=_read(f)
     if startswith(h,"BM")
-        return "bmp"
+        return true
     end
+    return false
 end
 
-push!(tests,test_bmp)
+push!(tests,isa_bmp)
 
 
-function test_pgm(f)
-    """PGM (portable graymap)"""
-    h=what(f)
+"PGM (portable graymap)"
+function isa_pgm(f)
+    h=_read(f)
     if length(h) >= 3 && h[1] == 'P' && occursin(h[2],"25") && occursin(h[3],"\t\n\r")
-        return "pgm"
+        return true
     end
+    return false
 end
 
-push!(tests,test_pgm)
+push!(tests,isa_pgm)
 
-function test_ppm(f)
-    """PPM (portable pixmap)"""
-    h=what(f)
+
+"PPM (portable pixmap)"
+function isa_ppm(f)
+    h=_read(f)
     if length(h) >= 3 && h[1] == 'P' && occursin(h[2],"36") && occursin(h[3],"\t\n\r")
-        return "ppm"
+        return true
     end
+    return false
 end
 
-push!(tests,test_ppm)
+push!(tests,isa_ppm)
 
-println(length(tests))
+
+# println(length(tests))
 
 """
        ImgHdr.check(path/to/file)
@@ -157,13 +179,14 @@ println(length(tests))
        "gif"
        ```
 """
-function check(filename::String)
-    for i in tests
-        p=i(filename)
-        if p != nothing
-            return p
+function imgtype(filename::String)
+    for f in tests
+        p=f(filename)
+        if p
+            return split(string(f), '_')[2]
         end
     end
+    return nothing  # just make it explicit
 end
 
 end
