@@ -65,7 +65,7 @@ using Test: @testset, @test, @test_throws
     @test imgtype(rast) != "gif"
 
     rgb = "images/example.rgb"
-    @test ImgHdr.isa_ppm(rgb)
+    @test ImgHdr.isa_rgb(rgb)
     @test imgtype(rgb) == "rgb"
     @test imgtype(rgb) != "png"
     
