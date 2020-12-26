@@ -17,7 +17,7 @@ end
 
 const tests = Function[]
 
-
+"""GIF ('87 and '89 variants)"""
 function isa_gif(f)
     h=_read(f)
     if h[1:6] == "GIF87a" || h[1:6] == "GIF89a"
@@ -28,7 +28,7 @@ end
 
 push!(tests,isa_gif)
 
-
+"JPEG data in JFIF or Exif format"
 function isa_jpeg(f)
     h=_read(f)
     if h[7:10] == "JFIF" || h[7:10] =="Exif"
@@ -51,7 +51,7 @@ end
 
 push!(tests,isa_rgb)
 
-
+"TIFF (can be in Motorola or Intel byte order)"
 function isa_tiff(f)
     h=_read(f)
     if h[1:2] == "MM" || h[1:2] == "II"
@@ -168,15 +168,15 @@ push!(tests,isa_ppm)
 
 # println(length(tests))
 
-"""
-       ImgHdr.check(path/to/file)
-
-       Checks image type
-
+"""    
+       imgtype("path/to/image_file")
+       Return a string with image type
        # Examples
        ```
-       julia>ImgHdr.check("example.gif") 
-       "gif"
+       julia> using ImgHdr
+       
+       julia> imgtype("path/to/file.png")
+       "png"
        ```
 """
 function imgtype(filename::String)
