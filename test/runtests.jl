@@ -1,3 +1,4 @@
+using ImgHdr
 using ImgHdr: imgtype
 using Test: @testset, @test, @test_throws
 
