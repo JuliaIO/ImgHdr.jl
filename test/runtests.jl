@@ -12,7 +12,7 @@ using Test: @testset, @test, @test_throws
 
     @test ImgHdr.isa_gif(gif)
     @test imgtype(gif) == "gif"
-    @test imgtype(png) != "png"
+    @test imgtype(gif) != "png"
 
     jpeg = "images/example.jpeg"
     @test ImgHdr.isa_jpeg(jpeg)
