@@ -53,9 +53,9 @@ jobs:
       - run: |
           julia --project=docs -e '
             using Documenter: DocMeta, doctest
-            using Contractions
-            DocMeta.setdocmeta!(Contractions, :DocTestSetup, :(using Contractions); recursive=true)
-            doctest(Contractions)'
+            using ImgHdr
+            DocMeta.setdocmeta!(ImgHdr, :DocTestSetup, :(using ImgHdr); recursive=true)
+            doctest(ImgHdr)'
       - run: julia --project=docs docs/make.jl
         env:
           JULIA_PKG_SERVER: ""
