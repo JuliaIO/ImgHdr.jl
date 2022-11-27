@@ -1,7 +1,8 @@
 # ImgHdr
 
-[![Build Status](https://travis-ci.org/Agent-Hellboy/ImgHdr.jl.svg?branch=main)](https://travis-ci.org/Agent-Hellboy/ImgHdr.jl)
-[![Coverage](https://codecov.io/gh/Agent-Hellboy/ImgHdr.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/Agent-Hellboy/ImgHdr.jl)
+
+[![Build Status](https://github.com/JuliaIO/ImgHdr.jl/workflows/CI/badge.svg)](https://github.com/JuliaIO/ImgHdr.jl/actions)
+[![Coverage](https://codecov.io/gh/JuliaIO/ImgHdr.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/JuliaIO/ImgHdr.jl)
 
 Library to Check Type of Image
     
